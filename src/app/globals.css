@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-bpsdm: #0F2C59;
+  --secondary-jaya: #FF6B00;
+  --gold-jaya: #F59E0B;
+}
+
+body {
+  color: #1e293b;
+  background-color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
