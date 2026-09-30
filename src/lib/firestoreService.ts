@@ -297,3 +297,63 @@ export function clearSessionUser(): void {
   if (typeof window === "undefined") return;
   sessionStorage.removeItem("peserta_user");
 }
+
+
+// ==========================================
+// USER REPOSITORY (PESERTA)
+// ==========================================
+
+export async function getAllUsers(): Promise<UserProfile[]> {
+  try {
+    const usersRef = collection(db, USERS_COL);
+    const q = query(usersRef, where("role", "==", "peserta"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      uid: doc.id,
+      ...doc.data()
+    } as UserProfile));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    try {
+      const snapshot = await getDocs(collection(db, USERS_COL));
+      return snapshot.docs
+        .map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile))
+        .filter(u => u.role === "peserta");
+    } catch (fallbackErr) {
+      return [];
+    }
+  }
+}
+
+export async function createUser(userData: Omit<UserProfile, "uid">): Promise<string> {
+  const usersRef = collection(db, USERS_COL);
+  const docRef = await addDoc(usersRef, {
+    ...userData,
+    createdAt: serverTimestamp()
+  });
+  return docRef.id;
+}
+
+export async function deleteUser(uid: string): Promise<void> {
+  const docRef = doc(db, USERS_COL, uid);
+  await deleteDoc(docRef);
+}
+
+// ==========================================
+// REPORTS (ENROLLMENTS)
+// ==========================================
+
+export async function getAllEnrollments(): Promise<Enrollment[]> {
+  try {
+    const enrollmentsRef = collection(db, ENROLLMENTS_COL);
+    const snapshot = await getDocs(enrollmentsRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Enrollment));
+  } catch (error) {
+    console.error("Error fetching enrollments:", error);
+    return [];
+  }
+}
+

@@ -1,9 +1,10 @@
 export interface UserProfile {
-  uid: string;
-  nama: string;
+  uid?: string;
+  username: string;
   nip: string;
   email: string;
   role: 'admin' | 'peserta';
+  password?: string;
   createdAt?: any;
 }
 

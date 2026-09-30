@@ -16,7 +16,7 @@ import {
 import { 
   getCourseById, 
   getOrCreateEnrollment, 
-  updateEnrollmentProgress 
+  updateEnrollmentProgress, getSessionUser
 } from "@/lib/firestoreService";
 import { Course, Enrollment, QuestionItem } from "@/types";
 
@@ -38,9 +38,10 @@ export default function LearningRoom({ courseId }: LearningRoomProps) {
   const [isSubmittingQuiz, setIsSubmittingQuiz] = useState<boolean>(false);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
 
-  // Static user ID for session demo (or authenticated user)
-  const currentUserId = "asn-dki-19880324";
-  const currentUserName = "Rian Hidayat, S.STP";
+  // Ambil data user yang sedang login (session)
+  const sessionUser = getSessionUser();
+  const currentUserId = sessionUser?.uid || "";
+  const currentUserName = sessionUser?.username || "";
 
   useEffect(() => {
     async function loadData() {

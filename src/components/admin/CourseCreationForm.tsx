@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { 
   FileText, 
   Video, 
@@ -17,6 +18,7 @@ import { createCourse } from "@/lib/firestoreService";
 import { ModuleItem, ZoomMeeting, QuestionItem } from "@/types";
 
 export default function CourseCreationForm() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"umum" | "modul" | "zoom" | "kuis">("umum");
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -182,6 +184,27 @@ export default function CourseCreationForm() {
     setCurrentQuestions(updated);
   };
 
+  const isFormValid = () => {
+    if (!judul.trim() || !deskripsi.trim() || !kategori.trim() || !durasi.trim()) return false;
+    for (const mod of modules) {
+      if (!mod.judul.trim() || !mod.pdfUrl.trim()) return false;
+    }
+    for (const zoom of zoomMeetings) {
+      if (!zoom.topik.trim() || !zoom.joinUrl.trim() || !zoom.jadwal.trim()) return false;
+    }
+    const checkQuestions = (questions: QuestionItem[]) => {
+      for (const q of questions) {
+        if (!q.pertanyaan.trim()) return false;
+        for (const p of q.pilihan) {
+          if (!p.trim()) return false;
+        }
+      }
+      return true;
+    };
+    if (!checkQuestions(pretestQuestions) || !checkQuestions(posttestQuestions)) return false;
+    return true;
+  };
+
   const handleSaveToFirestore = async () => {
     if (!judul.trim()) {
       setFeedback({ type: "error", message: "Judul diklat tidak boleh kosong!" });
@@ -221,6 +244,8 @@ export default function CourseCreationForm() {
         type: "success", 
         message: `Program Diklat berhasil disimpan ke Firestore! ID Dokumen: ${docId}` 
       });
+      alert(`Berhasil! Program Diklat "${judul}" telah disimpan.`);
+      router.push("/admin/diklat");
     } catch (err: any) {
       console.error(err);
       setFeedback({ 
@@ -604,20 +629,22 @@ export default function CourseCreationForm() {
         )}
 
         {/* Action Save Button */}
-        <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between">
-          <p className="text-xs text-slate-500">
-            Terhubung ke Firebase Firestore (<span className="font-mono text-bpsdm-blue">bpsdm-portal-diklat</span>)
-          </p>
-          <button
-            type="button"
-            disabled={isSaving}
-            onClick={handleSaveToFirestore}
-            className="flex items-center gap-2 bg-bpsdm-blue hover:bg-bpsdm-blue-light text-white font-semibold px-6 py-2.5 rounded-lg shadow transition-colors text-sm disabled:opacity-50"
-          >
-            <Save className="w-4 h-4 text-bpsdm-gold" />
-            {isSaving ? "Menyimpan ke Firestore..." : "Simpan Seluruh Konfigurasi Diklat ke Firestore"}
-          </button>
-        </div>
+        {activeTab === "kuis" && (
+          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between">
+            <p className="text-xs text-slate-500">
+              Terhubung ke Firebase Firestore (<span className="font-mono text-bpsdm-blue">bpsdm-portal-diklat</span>)
+            </p>
+            <button
+              type="button"
+              disabled={isSaving || !isFormValid()}
+              onClick={handleSaveToFirestore}
+              className="flex items-center gap-2 bg-bpsdm-blue hover:bg-bpsdm-blue-light text-white font-semibold px-6 py-2.5 rounded-lg shadow transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save className="w-4 h-4 text-bpsdm-gold" />
+              {isSaving ? "Menyimpan ke Firestore..." : "Simpan Seluruh Konfigurasi Diklat ke Firestore"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

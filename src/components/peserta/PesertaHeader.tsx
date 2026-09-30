@@ -50,14 +50,14 @@ export default function PesertaHeader() {
           <div className="flex items-center gap-3 pl-4 border-l border-bpsdm-blue-light/50">
             <div className="text-right hidden md:block">
               <p className="text-xs font-semibold text-white">
-                {currentUser?.nama || "Diaz Raviv Nur"}
+                {currentUser?.username || "Diaz Raviv Nur"}
               </p>
               <p className="text-[11px] text-blue-200">
                 NIP: {currentUser?.nip || "223043"}
               </p>
             </div>
             <div className="w-9 h-9 rounded-full bg-jayaraya-orange text-white font-bold flex items-center justify-center text-xs shadow">
-              {currentUser?.nama ? currentUser.nama.substring(0, 2).toUpperCase() : "DR"}
+              {currentUser?.username ? currentUser.username.substring(0, 2).toUpperCase() : "DR"}
             </div>
             <button
               onClick={handleLogout}
