@@ -1,8 +1,8 @@
 {
   "/page": "app/page.js",
-  "/peserta/course/[id]/page": "app/peserta/course/[id]/page.js",
+  "/api/seed/route": "app/api/seed/route.js",
+  "/admin/page": "app/admin/page.js",
   "/admin/diklat/page": "app/admin/diklat/page.js",
-  "/peserta/page": "app/peserta/page.js",
-  "/admin/diklat/create/page": "app/admin/diklat/create/page.js",
-  "/admin/page": "app/admin/page.js"
+  "/admin/peserta/page": "app/admin/peserta/page.js",
+  "/admin/laporan/page": "app/admin/laporan/page.js"
 }

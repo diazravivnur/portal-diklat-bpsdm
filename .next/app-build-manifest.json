@@ -1,16 +1,5 @@
 {
   "pages": {
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/layout.css",
-      "static/chunks/app/layout.js"
-    ],
     "/admin/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -21,20 +10,26 @@
       "static/chunks/main-app.js",
       "static/chunks/app/admin/layout.js"
     ],
-    "/admin/laporan/page": [
+    "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/laporan/page.js"
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/admin/diklat/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/diklat/page.js"
     ],
     "/admin/peserta/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/admin/peserta/page.js"
     ],
-    "/admin/diklat/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/diklat/page.js"
+      "static/chunks/app/page.js"
     ],
     "/peserta/page": [
       "static/chunks/webpack.js",
@@ -46,15 +41,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/peserta/layout.js"
     ],
-    "/admin/diklat/create/page": [
+    "/admin/laporan/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/diklat/create/page.js"
-    ],
-    "/peserta/course/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/peserta/course/[id]/page.js"
+      "static/chunks/app/admin/laporan/page.js"
     ]
   }
 }

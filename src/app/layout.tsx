@@ -5,6 +5,9 @@ import StaticFooter from "@/components/common/StaticFooter";
 export const metadata: Metadata = {
   title: "PORTAL DIKLAT KNOWLEDGE MANAGEMENT BPSDM PROVINSI DKI JAKARTA",
   description: "Platform E-Learning dan Knowledge Management BPSDM Provinsi DKI Jakarta",
+  icons: {
+    icon: "/logos/jaya-raya.png",
+  },
 };
 
 export default function RootLayout({

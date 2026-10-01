@@ -1,70 +1,90 @@
-import Link from "next/link";
-import { ShieldCheck, GraduationCap, ArrowRight, BookOpen, Layers } from "lucide-react";
+'use client';
+import { useEffect, useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { getAllUsers, createUser, setSessionUser } from "@/lib/firestoreService";
+import { UserProfile } from "@/types";
 
-export default function HomePage() {
+export default function LoginPage() {
+  const router = useRouter();
+  const [nip, setNip] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+// Ensure default users exist by calling seed endpoint
+  useEffect(() => {
+    fetch('/api/seed').catch(console.error);
+  }, []);
+
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const users = await getAllUsers();
+      // Hardcoded credentials fallback
+      let found: UserProfile | undefined;
+      if (nip === '197206101999032008' && password === 'password') {
+        found = { uid: 'admin', username: 'Dr. Ima Rohimah, M.Pd.', nip, email: 'admin@example.com', role: 'admin' } as UserProfile;
+      } else if (nip === '223043' && password === 'password') {
+        found = { uid: 'peserta', username: 'Diaz Raviv Nur', nip, email: 'peserta@example.com', role: 'peserta' } as UserProfile;
+      }
+      if (!found) {
+        setError("Invalid NIP/NRK or password");
+        return;
+      }
+      const session: UserProfile = {
+        uid: found.uid,
+        username: found.username,
+        nip: found.nip,
+        email: found.email,
+        role: found.role,
+      };
+      setSessionUser(session);
+      if (found.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/peserta");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Login failed");
+    }
+  };
+
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-100">
-      <div className="max-w-3xl w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        {/* Header */}
-        <div className="bg-bpsdm-blue text-white p-8 text-center relative">
-          <div className="inline-flex items-center gap-2 bg-bpsdm-gold/20 text-bpsdm-gold px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 border border-bpsdm-gold/30">
-            Badan Pengembangan Sumber Daya Manusia
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
-            PORTAL DIKLAT KNOWLEDGE MANAGEMENT
-          </h1>
-          <p className="text-blue-200 text-xs sm:text-sm mt-2">
-            Provinsi Daerah Khusus Ibukota Jakarta
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-80 flex flex-col items-center">
+        <Image src="/logos/bpsdm.png" alt="BPSDM" width={80} height={80} className="mb-4" />
+        <h2 className="text-2xl mb-4 text-center font-semibold">Login Portal Diklat</h2>
+        <div className="w-full mb-4">
+          <label className="block text-sm font-medium mb-1">NIP / NRK</label>
+          <input
+            type="text"
+            value={nip}
+            onChange={e => setNip(e.target.value)}
+            className="w-full border rounded px-2 py-1"
+            required
+          />
         </div>
-
-        {/* Portal Entry Options */}
-        <div className="p-8 sm:p-10 space-y-6">
-          <p className="text-center text-slate-600 text-sm max-w-lg mx-auto">
-            Silakan pilih akses dashboard sesuai peran Anda dalam ekosistem pembelajaran digital BPSDM DKI Jakarta:
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Opsi Admin */}
-            <Link
-              href="/admin"
-              className="p-6 rounded-xl border-2 border-slate-200 hover:border-bpsdm-blue hover:shadow-lg transition-all flex flex-col group bg-slate-50 hover:bg-white"
-            >
-              <div className="w-12 h-12 rounded-xl bg-bpsdm-blue text-bpsdm-gold flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <h2 className="text-lg font-bold text-slate-800 group-hover:text-bpsdm-blue transition-colors">
-                Dashboard Admin
-              </h2>
-              <p className="text-xs text-slate-500 mt-2 flex-1">
-                Kelola diklat, upload materi PDF, atur sesi tautan Zoom, dan kelola butir soal kuis secara terintegrasi (Sistem Tabs).
-              </p>
-              <div className="mt-4 flex items-center text-xs font-bold text-bpsdm-blue gap-1">
-                Masuk Admin Panel <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </Link>
-
-            {/* Opsi Peserta */}
-            <Link
-              href="/peserta"
-              className="p-6 rounded-xl border-2 border-slate-200 hover:border-jayaraya-orange hover:shadow-lg transition-all flex flex-col group bg-slate-50 hover:bg-white"
-            >
-              <div className="w-12 h-12 rounded-xl bg-jayaraya-orange text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <h2 className="text-lg font-bold text-slate-800 group-hover:text-jayaraya-orange transition-colors">
-                Dashboard Peserta
-              </h2>
-              <p className="text-xs text-slate-500 mt-2 flex-1">
-                Akses katalog diklat mandiri, ikuti alur belajar sekuensial (Pretest &rarr; Modul PDF &rarr; Zoom &rarr; Posttest), dan selesaikan sertifikasi.
-              </p>
-              <div className="mt-4 flex items-center text-xs font-bold text-jayaraya-orange gap-1">
-                Masuk Ruang Peserta <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </Link>
-          </div>
+        <div className="w-full mb-4">
+          <label className="block text-sm font-medium mb-1">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="w-full border rounded px-2 py-1"
+            required
+          />
         </div>
-      </div>
+        {error && <p className="text-red-600 mb-2 w-full text-center">{error}</p>}
+        <button
+          type="submit"
+          className="w-full bg-bpsdm-blue text-white py-2 rounded hover:bg-bpsdm-blue-dark transition"
+        >
+          Masuk
+        </button>
+      </form>
     </div>
   );
 }
+
